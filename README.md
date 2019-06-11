@@ -1,4 +1,17 @@
 # pws_remastered
+
+~~~
+
+                                                   _               _ 
+  a comical comic web-scraper                     | |             | |
+  _ ____      _____   _ __ ___ _ __ ___   __ _ ___| |_ ___ _ __ __| |
+ | '_ \ \ /\ / / __| | '__/ _ \ '_ ` _ \ / _` / __| __/ _ \ '__/ _` |
+ | |_) \ V  V /\__ \ | | |  __/ | | | | | (_| \__ \ ||  __/ | | (_| |
+ | .__/ \_/\_/ |___/ |_|  \___|_| |_| |_|\__,_|___/\__\___|_|  \__,_|
+ | |             ______                                              
+ |_|            |______|                    version: beta | June 2019 
+
+~~~
 A fresh take on poorlydrwanlines.com comic image scraper based on my previous [script](https://github.com/baduker/poorlywrittenscraper).
 
 There are going to be some major changes and improvements over the first edition.
