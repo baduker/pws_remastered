@@ -4,3 +4,4 @@ poorly_created_folder/
 # Don't track these files:
 first_test.py
 rev.py
+*.zip
