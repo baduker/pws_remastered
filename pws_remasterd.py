@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+import shutil
 
 
 import requests
@@ -69,6 +70,11 @@ def update_source_url(list_of_new_source_urls):
 # creates a default download folder
 def create_folder():
     os.makedirs(DEFAULT_DIR_NAME, exist_ok=True)
+
+
+# it just zips the poorly_created_folder with downloaded comics
+def zip_the_comic_folder():
+    shutil.make_archive("pwd_zipped", "zip", "poorly_created_folder")
 
 
 # chops off the tail of source url to get a comic name
