@@ -123,6 +123,22 @@ def save_comic(session, url):
         comic_image.write(response.content)
 
 
+# returns a reversed list that's used to append the database of urls
+def collect_new_urls(session, online_archive, datebase):
+    num_of_new_comics = len(online_archive) - len(datebase)
+    return [
+            grab_image_src_url(session, url) for
+            url in online_archive[:num_of_new_comics]
+            ][::-1]
+
+
+# updates the source url data base with fresh entries
+def update_the_database(list_of_new_source_urls):
+    with open("data.bdkr", "a+") as data:
+        for new_src_url in list_of_new_source_urls:
+            data.write("{}\n".format(new_src_url))    
+
+
 # one functions to rule them all!
 def main():
     show_logo()
@@ -133,6 +149,10 @@ def main():
     local_datebase = upload_source_urls()
 
     compare_database_with_the_archive(local_datebase, pws_archive)
+
+    l = collect_new_urls(session, pws_archive, local_datebase)
+
+    update_the_database(l)
 
     # UNCOMMENT TO START DOWNLOADING!
     # download_comic()
