@@ -8,8 +8,7 @@ import re
 import sys
 import time
 import shutil
-
-
+import datetime
 import requests
 from bs4 import BeautifulSoup as bs
 
@@ -51,8 +50,16 @@ def compare_database_with_the_archive(datebase, archive):
     arch_len = len(archive)
     difference = arch_len - db_len
 
+    # this is a flaga for the update_the_datebase method
+    found_new_comics = bool
+
+    if difference >= 1:
+        found_new_comics = True
+    else:
+        found_new_comics = False
+
     print("There are {} comics available in the datebase.".format(db_len))
-    print("There are {} comics on the site.".format(arch_len))
+    print("There are {} comics on the site.\n".format(arch_len))
 
     if difference > 1:
         print("There are {} new comics!".format(difference))
@@ -62,9 +69,7 @@ def compare_database_with_the_archive(datebase, archive):
         print("Bad news - there are no new comics.")
         print("Good news - you're datebase is up-to-date! :)")
 
-
-def update_source_url(list_of_new_source_urls):
-    return 0
+    return found_new_comics
 
 
 # creates a default download folder
@@ -72,9 +77,11 @@ def create_folder():
     os.makedirs(DEFAULT_DIR_NAME, exist_ok=True)
 
 
-# it just zips the poorly_created_folder with downloaded comics
-def zip_the_comic_folder():
-    shutil.make_archive("pwd_zipped", "zip", "poorly_created_folder")
+# used to zip the comic download folder and the database
+def zip_it(zip_name, folder_name):
+    today = datetime.date.today()
+    full_zip_name = zip_name + "_" + str(today)
+    shutil.make_archive(full_zip_name, "zip", folder_name)
 
 
 # chops off the tail of source url to get a comic name
@@ -126,10 +133,14 @@ def save_comic(session, url):
 # returns a reversed list that's used to append the database of urls
 def collect_new_urls(session, online_archive, datebase):
     num_of_new_comics = len(online_archive) - len(datebase)
-    return [
-            grab_image_src_url(session, url) for
-            url in online_archive[:num_of_new_comics]
-            ][::-1]
+    
+    print("Collecting new source urls. This might take a while.")
+
+    fresh_src_urls = []
+    for url in online_archive[:num_of_new_comics]:
+        print("Updating: {comic_name}".format(comic_name=url.split("/")[-2]))
+        fresh_src_urls.append(grab_image_src_url(session, url))
+    return fresh_src_urls[::-1]
 
 
 # updates the source url data base with fresh entries
@@ -148,11 +159,14 @@ def main():
     pws_archive = check_for_new_comics(session)
     local_datebase = upload_source_urls()
 
-    compare_database_with_the_archive(local_datebase, pws_archive)
+    if compare_database_with_the_archive(local_datebase, pws_archive):
+        collect_new_urls(session, pws_archive, local_datebase)
+    else:
+        print("All up-to-date. Nothing to do!")
+    
 
-    l = collect_new_urls(session, pws_archive, local_datebase)
-
-    update_the_database(l)
+    zip_it("pwd_comics", "poorly_created_folder")    
+    # update_the_database(l)
 
     # UNCOMMENT TO START DOWNLOADING!
     # download_comic()
