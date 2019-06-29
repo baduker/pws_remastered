@@ -27,7 +27,7 @@ LOGO = """
  | |_) \ V  V /\__ \ | | |  __/ | | | | | (_| \__ \ ||  __/ | | (_| |
  | .__/ \_/\_/ |___/ |_|  \___|_| |_| |_|\__,_|___/\__\___|_|  \__,_|
  | |             ______
- |_|            |______|                    version: beta | June 2019
+ |_|            |______|                   version: alpha | July 2019
 
 """
 
@@ -114,9 +114,9 @@ def grab_image_src_url(session, url):
 
 
 # fetches the comic image from the comic server
-def download_comic(list_of_source_urls):
+def download_comic(list_of_source_urls, comics_to_download):
     session = requests.Session()
-    for url in list_of_source_urls:
+    for url in list_of_source_urls[:comics_to_download]:
         print("Getting: {comic_name}".format(comic_name=get_comic_name(url)))
         save_comic(session, url)
 
@@ -150,7 +150,30 @@ def update_the_database(list_of_new_source_urls):
             data.write("{}\n".format(new_src_url))    
 
 
-# one functions to rule them all!
+def download_comics_menu(comics_found):
+    """
+    Main download menu, takes number of available comics for download
+    """
+    print("\nThe scraper has found {} comics.".format(len(comics_found)))
+    print("How many comics do you want to download?")
+    print("NOTE: Comics are fetched from newest to oldest.")
+    print("Type 0 to exit.")
+
+    while True:
+        try:
+            comics_to_download = int(input(">> "))
+        except ValueError:
+            print("Error: expected a number. Try again.")
+            continue
+        if comics_to_download > len(comics_found) or comics_to_download < 0:
+            print("Error: incorrect number of comics to download. Try again.")
+            continue
+        elif comics_to_download == 0:
+            sys.exit()
+        return comics_to_download
+
+
+# one function to rule them all!
 def main():
     show_logo()
 
@@ -160,16 +183,20 @@ def main():
     local_datebase = upload_source_urls()
 
     if compare_database_with_the_archive(local_datebase, pws_archive):
-        collect_new_urls(session, pws_archive, local_datebase)
+        fresh_comics = collect_new_urls(session, pws_archive, local_datebase)
+        update_the_database(fresh_comics)
     else:
         print("All up-to-date. Nothing to do!")
     
+    updated_local_databse = upload_source_urls()
 
-    zip_it("pwd_comics", "poorly_created_folder")    
-    # update_the_database(l)
+    comics_to_download = download_comics_menu(updated_local_databse)
 
     # UNCOMMENT TO START DOWNLOADING!
-    # download_comic()
+    download_comic(updated_local_databse, comics_to_download)
+
+    zip_it("pwd_comics", "poorly_created_folder")
+
 
 
 if __name__ == '__main__':
