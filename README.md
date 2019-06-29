@@ -18,7 +18,7 @@ There are some major changes and improvements over the first edition.
 
 **What's new?**
 
-[![hotshit.png](http://www.poorlydrawnlines.com/wp-content/uploads/2019/06/hot-shit-kevin.png)](http://www.poorlydrawnlines.com/comic/hot-shit/)
+[![hotshit.png](http://www.poorlydrawnlines.com/wp-content/uploads/2019/06/learn.png)](http://www.poorlydrawnlines.com/comic/learn/)
 
 1. The script come swith a pre-loaded list of source urls to speed up scraping.
 2. There's going to be a simple .json file based database of comic names, comic urls, source image urls, dates (published & downloaded), and comic number. -> **TO BE IMPLEMENTED**
