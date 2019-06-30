@@ -9,6 +9,8 @@ import sys
 import time
 import shutil
 import datetime
+
+
 import requests
 from bs4 import BeautifulSoup as bs
 
@@ -41,35 +43,12 @@ def upload_source_urls():
     with open("data.bdkr", "r") as data:
         source_urls = data.readlines()
     # reverses the list to show comics from the most recent one
-    return [line[:-1] for line in source_urls][::-1]
+    # Actually, don't reverse it!
+    return [line[:-1] for line in source_urls]
 
 
-# reports on differences between the datebase and the online archive
-def compare_database_with_the_archive(datebase, archive):
-    db_len = len(datebase)
-    arch_len = len(archive)
-    difference = arch_len - db_len
-
-    # this is a flaga for the update_the_datebase method
-    found_new_comics = bool
-
-    if difference >= 1:
-        found_new_comics = True
-    else:
-        found_new_comics = False
-
-    print("There are {} comics available in the datebase.".format(db_len))
-    print("There are {} comics on the site.\n".format(arch_len))
-
-    if difference > 1:
-        print("There are {} new comics!".format(difference))
-    elif difference == 1:
-        print("There is {} new comic!.".format(difference))
-    else:
-        print("Bad news - there are no new comics.")
-        print("Good news - you're datebase is up-to-date! :)")
-
-    return found_new_comics
+def count_difference(database, archive):
+    return len(archive) - len(database)
 
 
 # creates a default download folder
@@ -89,7 +68,7 @@ def get_comic_name(url):
     return url.split("/")[-1]
 
 
-def check_for_new_comics(session):
+def check_online_archive(session):
     """
     Grabs all urls from the poorlydrawnlines.com/archive,
     parses for only those that link to published comics
@@ -123,7 +102,6 @@ def download_comic(list_of_source_urls, comics_to_download):
 
 # stores the comic image on the drive in the default folder
 def save_comic(session, url):
-    create_folder()
     file_name = get_comic_name(url)
     with open(os.path.join(COMICS_DIRECTORY, file_name), "wb") as comic_image:
         response = session.get(url)
@@ -131,20 +109,19 @@ def save_comic(session, url):
 
 
 # returns a reversed list that's used to append the database of urls
-def collect_new_urls(session, online_archive, datebase):
-    num_of_new_comics = len(online_archive) - len(datebase)
+def collect_new_urls(session, online_archive, difference):
     
     print("Collecting new source urls. This might take a while.")
 
     fresh_src_urls = []
-    for url in online_archive[:num_of_new_comics]:
+    for url in online_archive[:difference]:
         print("Updating: {comic_name}".format(comic_name=url.split("/")[-2]))
         fresh_src_urls.append(grab_image_src_url(session, url))
-    return fresh_src_urls[::-1]
+    return fresh_src_urls
 
 
 # updates the source url data base with fresh entries
-def update_the_database(list_of_new_source_urls):
+def save_changes_to_local_datebase(list_of_new_source_urls):
     with open("data.bdkr", "a+") as data:
         for new_src_url in list_of_new_source_urls:
             data.write("{}\n".format(new_src_url))    
@@ -154,9 +131,8 @@ def download_comics_menu(comics_found):
     """
     Main download menu, takes number of available comics for download
     """
-    print("\nThe scraper has found {} comics.".format(len(comics_found)))
+    print("\nThe scraper has found {} comics.".format(comics_found))
     print("How many comics do you want to download?")
-    print("NOTE: Comics are fetched from newest to oldest.")
     print("Type 0 to exit.")
 
     while True:
@@ -165,12 +141,32 @@ def download_comics_menu(comics_found):
         except ValueError:
             print("Error: expected a number. Try again.")
             continue
-        if comics_to_download > len(comics_found) or comics_to_download < 0:
+        if comics_to_download > comics_found or comics_to_download < 0:
             print("Error: incorrect number of comics to download. Try again.")
             continue
         elif comics_to_download == 0:
             sys.exit()
         return comics_to_download
+
+
+def show_time(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+
+
+def show_summary(seconds, comics_to_download):
+    print(f"Downloaded {comics_to_download} comic(s) in {show_time(seconds)}")
+
+
+def perform_update(session, local_datebase, pws_archive, difference):
+    if difference >= 1:
+        fresh_src_urls = collect_new_urls(session, pws_archive, difference)
+        local_datebase += fresh_src_urls
+    else:
+        print("All up-to-date. Ready player one!")
+
+    return local_datebase[::-1]
 
 
 # one function to rule them all!
@@ -179,24 +175,27 @@ def main():
 
     session = requests.Session()
 
-    pws_archive = check_for_new_comics(session)
     local_datebase = upload_source_urls()
+    pws_archive = check_online_archive(session)
 
-    if compare_database_with_the_archive(local_datebase, pws_archive):
-        fresh_comics = collect_new_urls(session, pws_archive, local_datebase)
-        update_the_database(fresh_comics)
-    else:
-        print("All up-to-date. Nothing to do!")
-    
-    updated_local_databse = upload_source_urls()
+    difference = count_difference(local_datebase, pws_archive)
 
-    comics_to_download = download_comics_menu(updated_local_databse)
+    updated_database = perform_update(session, local_datebase, pws_archive, difference)
 
-    # UNCOMMENT TO START DOWNLOADING!
-    download_comic(updated_local_databse, comics_to_download)
+    print(updated_database[:3]) # TO-DO: Fix the download order
 
+    comics_to_download = download_comics_menu(len(updated_database))
+
+    start = time.time()
+    create_folder()
+    download_comic(updated_database, comics_to_download)
+    end = time.time()
+
+    show_summary(int(end - start), comics_to_download)
+    # maintanance part
+    save_changes_to_local_datebase(updated_database[:difference])
     zip_it("pwd_comics", "poorly_created_folder")
-
+    shutil.copy2("data.bdkr", "BACKUP_data.bdkr")
 
 
 if __name__ == '__main__':
