@@ -6,3 +6,5 @@ first_test.py
 rev.py
 *.zip
 copy_data.bdkr
+backup_data.bdkr
+BACKUP_data.bdkr
