@@ -8,9 +8,13 @@ import re
 import sys
 import time
 import shutil
+import random
 import datetime
 
+# PEP-8 recommends a blank line in between
+# stdlib imports and third-party imports.
 
+import colorama
 import requests
 from bs4 import BeautifulSoup as bs
 
@@ -29,21 +33,29 @@ LOGO = """
  | |_) \ V  V /\__ \ | | |  __/ | | | | | (_| \__ \ ||  __/ | | (_| |
  | .__/ \_/\_/ |___/ |_|  \___|_| |_| |_|\__,_|___/\__\___|_|  \__,_|
  | |             ______
- |_|            |______|                   version: alpha | July 2019
+ |_|            |______|                                 version: 1.0
 
 """
 
 
 def show_logo():
-    print(LOGO)
+    """
+    Displays the ASCII logo.
+    """
+    bad_colors = ["BLACK", "LIGHTBLACK_EX", "RESET"]
+    colorama.init(autoreset=True)
+    codes = vars(colorama.Fore)
+    colors = [codes[color] for color in codes if color not in bad_colors]
+    colored_logo = [random.choice(colors) + line for line in LOGO.split("\n")]
+    print("\n".join(colored_logo))
 
 
-# loads list of image source urls
 def upload_source_urls():
+    """
+    Loads list of image source urls from file.
+    """
     with open("data.bdkr", "r") as data:
         source_urls = data.readlines()
-    # reverses the list to show comics from the most recent one
-    # Actually, don't reverse it!
     return [line[:-1] for line in source_urls]
 
 
@@ -51,20 +63,26 @@ def count_difference(database, archive):
     return len(archive) - len(database)
 
 
-# creates a default download folder
 def create_folder():
+    """
+    Creates a default download folder.
+    """
     os.makedirs(DEFAULT_DIR_NAME, exist_ok=True)
 
 
-# used to zip the comic download folder and the database
 def zip_it(zip_name, folder_name):
+    """
+    Zips the comic download folder.
+    """
     today = datetime.date.today()
     full_zip_name = zip_name + "_" + str(today)
     shutil.make_archive(full_zip_name, "zip", folder_name)
 
 
-# chops off the tail of source url to get a comic name
 def get_comic_name(url):
+    """
+    Chops off the tail of source url to get a comic name.
+    """
     return url.split("/")[-1]
 
 
@@ -92,46 +110,52 @@ def grab_image_src_url(session, url):
                 return img['src']
 
 
-# fetches the comic image from the comic server
 def download_comic(list_of_source_urls, comics_to_download):
+    """
+    Fetches the comic image from the comic server.
+    """
     session = requests.Session()
     for url in list_of_source_urls[:comics_to_download]:
-        print("Getting: {comic_name}".format(comic_name=get_comic_name(url)))
+        print(f"Getting: {get_comic_name(url)}")
         save_comic(session, url)
 
 
-# stores the comic image on the drive in the default folder
 def save_comic(session, url):
+    """
+    Stores the comic image on the drive in the default folder.
+    """
     file_name = get_comic_name(url)
     with open(os.path.join(COMICS_DIRECTORY, file_name), "wb") as comic_image:
         response = session.get(url)
         comic_image.write(response.content)
 
 
-# returns a reversed list that's used to append the database of urls
-def collect_new_urls(session, online_archive, difference):
-    
+def collect_new_url(session, online_archive, difference):
+    """
+    Returns a list of source urls of newly published comics.
+    """
     print("Collecting new source urls. This might take a while.")
-
     fresh_src_urls = []
     for url in online_archive[:difference]:
-        print("Updating: {comic_name}".format(comic_name=url.split("/")[-2]))
+        print("Updating: {}".format(url.split("/")[-2]))
         fresh_src_urls.append(grab_image_src_url(session, url))
     return fresh_src_urls
 
 
-# updates the source url data base with fresh entries
 def save_changes_to_local_datebase(list_of_new_source_urls):
+    """
+    Updates the source url data base with fresh entries.
+    """
     with open("data.bdkr", "a+") as data:
         for new_src_url in list_of_new_source_urls:
-            data.write("{}\n".format(new_src_url))    
+            data.write("{}\n".format(new_src_url))
 
 
 def download_comics_menu(comics_found):
     """
     Main download menu, takes number of available comics for download
     """
-    print("\nThe scraper has found {} comics.".format(comics_found))
+    print(f"\nThe scraper has found {comics_found} comics.")
     print("How many comics do you want to download?")
     print("Type 0 to exit.")
 
@@ -150,22 +174,31 @@ def download_comics_menu(comics_found):
 
 
 def show_time(seconds):
+    """
+    Return download duration of comics in human readable format.
+    """
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     return "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
 
 
 def show_summary(seconds, comics_to_download):
-    print(f"Downloaded {comics_to_download} comic(s) in {show_time(seconds)}")
+    """
+    Displays the number of fetched comics and the time it took.
+    """
+    print(f"Downloaded {comics_to_download} comic(s) in {show_time(seconds)}.")
 
 
 def perform_update(session, local_datebase, pws_archive, difference):
+    """
+    This is a wrapper for database update logic if there have been new
+    comics added on-line.
+    """
     if difference >= 1:
         fresh_src_urls = collect_new_urls(session, pws_archive, difference)
         local_datebase += fresh_src_urls
     else:
         print("All up-to-date. Ready player one!")
-
     return local_datebase[::-1]
 
 
@@ -180,9 +213,8 @@ def main():
 
     difference = count_difference(local_datebase, pws_archive)
 
-    updated_database = perform_update(session, local_datebase, pws_archive, difference)
-
-    print(updated_database[:3]) # TO-DO: Fix the download order
+    updated_database = perform_update(
+                      session, local_datebase, pws_archive, difference)
 
     comics_to_download = download_comics_menu(len(updated_database))
 
@@ -192,7 +224,7 @@ def main():
     end = time.time()
 
     show_summary(int(end - start), comics_to_download)
-    # maintanance part
+    # maintenance part
     save_changes_to_local_datebase(updated_database[:difference])
     zip_it("pwd_comics", "poorly_created_folder")
     shutil.copy2("data.bdkr", "BACKUP_data.bdkr")
