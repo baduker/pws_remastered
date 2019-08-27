@@ -130,7 +130,7 @@ def save_comic(session, url):
         comic_image.write(response.content)
 
 
-def collect_new_url(session, online_archive, difference):
+def collect_new_urls(session, online_archive, difference):
     """
     Returns a list of source urls of newly published comics.
     """
