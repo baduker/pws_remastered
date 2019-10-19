@@ -30,9 +30,9 @@ Here's a list of some the major changes and improvements over the first edition.
 
 **Requirements**
 
-[x] Python 3.6+
-[x] requests
-[x] lxml
+- [x] Python 3.6+
+- [x] requests
+- [x] lxml
 
 Create a new virtual environment with Python 3.6+ and then just type:
 > pip3 install -r requirements.txt
