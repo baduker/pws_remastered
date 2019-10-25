@@ -16,6 +16,8 @@ import random
 import colorama
 from pathlib import Path
 from shutil import copyfileobj
+from urllib.parse import urlparse, urljoin
+
 
 import requests
 from lxml import html
@@ -38,8 +40,10 @@ a remake of...
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: beta
+        version: alpha
 """}
+
+COMIC_PATTERN = re.compile(r'http://www.poorlydrawnlines.com/comic/.+')
 
 
 def show_logo():
@@ -53,14 +57,46 @@ def show_logo():
 
 
 def read_json_data():
-    with open('pws_data.json', 'r') as jf:
+    with open('data.json', 'r') as jf:
         data = json.load(jf)
     # flip the list to get the newest comics first
-    return data[::-1]
+    return data
+
+
+def getter(url, xpath):
+    return html.fromstring(requests.get(url).content).xpath(xpath)
+
+
+def fetch_online_archive():
+    print(f"Checking the online archive...")
+    archive = getter(GLOBALS["archive_url"], GLOBALS["comic_url_xpath"])
+    return [url for url in archive if COMIC_PATTERN.match(url)]
+
+
+def head_option(values):
+    return next(iter(values), None)
+
+
+def get_comic_img_url(url):
+    return head_option(getter(url, GLOBALS["comic_img_xpath"]))
+
+
+def process_url_to_dict(new_urls: list):
+    for new_url in new_urls:
+        name = urlparse(new_url).path.split("/")[-1]
+        year = int(urlparse(new_url).path.split("/")[3])
+        month = int(urlparse(new_url).path.split("/")[4])
+        yield {
+            "comic_name": name.split(".")[0],
+            "file_name": name,
+            "year": year,
+            "month": month,
+            "comic_url": urljoin(GLOBALS["base_url"], name + "/"),
+            "comic_img_url": new_url}
 
 
 def download_comics_menu(comics_found: int) -> int:
-    print(f"\nThe scraper has found {comics_found} comics.")
+    print(f"\nThe are {comics_found} comics in the database.")
     print("How many comics do you want to download?")
     print("Type 0 to exit.")
     while True:
@@ -77,13 +113,16 @@ def download_comics_menu(comics_found: int) -> int:
         return comics_to_download
 
 
-def make_dir():
-    return os.makedirs(Path(GLOBALS["save_directory"]), exist_ok=True)
+def make_dir(dir_path):
+    return os.makedirs(Path(dir_path), exist_ok=True)
 
 
 def save_image(comic: dict):
     comic_name = comic["file_name"]
-    fn = Path(GLOBALS["save_directory"]) / comic_name
+    comic_year_folder = os.path.join(
+        GLOBALS["save_directory"], str(comic["year"]))
+    make_dir(comic_year_folder)
+    fn = Path(comic_year_folder) / comic_name
     print(f"Fetching: {comic_name}")
     with requests.get(comic["comic_img_url"], stream=True) \
             as img, open(fn, "wb") as output:
@@ -93,9 +132,24 @@ def save_image(comic: dict):
 def main():
     show_logo()
     pws_data = read_json_data()
-    comics_to_download = download_comics_menu(len(pws_data))
-    make_dir()
-    for comic in pws_data[:comics_to_download]:
+    online_archive = fetch_online_archive()
+
+    if len(online_archive) > len(pws_data):
+        diff = len(online_archive) - len(pws_data)
+        print(f"Found {diff} new comic(s).")
+        print(f"Updating...")
+        updated = [i for i in process_url_to_dict(
+            [get_comic_img_url(nc) for nc in online_archive[:diff]])]
+
+        all_together = pws_data + updated
+
+        with open("data.json", "w") as jf:
+            data = json.dump(all_together, jf, indent=4, sort_keys=True)
+        print(f"Done updating!")
+
+    most_current_data = read_json_data()
+    comics_to_download = download_comics_menu(len(most_current_data))
+    for comic in most_current_data[::-1][:comics_to_download]:
         save_image(comic)
 
 

@@ -8654,5 +8654,13 @@
         "file_name": "how-many-fish.png",
         "month": 10,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/10/to-be-amazing.png",
+        "comic_name": "to-be-amazing",
+        "comic_url": "http://www.poorlydrawnlines.com/to-be-amazing.png/",
+        "file_name": "to-be-amazing.png",
+        "month": 10,
+        "year": 2019
     }
 ]
