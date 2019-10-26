@@ -56,11 +56,15 @@ def show_logo():
     print("\n".join(colored_logo))
 
 
-def read_json_data():
-    with open('data.json', 'r') as jf:
+def read_json_data(file_name):
+    with open(file_name, "r") as jf:
         data = json.load(jf)
-    # flip the list to get the newest comics first
     return data
+
+
+def write_json_data(file_name, data_object):
+    with open(file_name, "w") as jf:
+        data = json.dump(data_object, jf, indent=4, sort_keys=True)
 
 
 def getter(url, xpath):
@@ -93,6 +97,23 @@ def process_url_to_dict(new_urls: list):
             "month": month,
             "comic_url": urljoin(GLOBALS["base_url"], name + "/"),
             "comic_img_url": new_url}
+
+
+def update_database():
+    old_json_data = read_json_data('data.json')
+    online_archive = fetch_online_archive()
+    if len(online_archive) > len(old_json_data):
+        diff = len(online_archive) - len(old_json_data)
+        print(f"Found {diff} new comic(s).")
+        print(f"Updating...")
+        new_comics = [get_comic_img_url(nc) for nc in online_archive[:diff]]
+        new_comics_json = [url for url in process_url_to_dict(new_comics)]
+        updated_data = old_json_data + new_comics_json
+        write_json_data('data.json', updated_data)
+        print(f"Done updating!")
+        new_json_data = read_json_data('data.json')
+        return new_json_data
+    return old_json_data
 
 
 def download_comics_menu(comics_found: int) -> int:
@@ -131,25 +152,9 @@ def save_image(comic: dict):
 
 def main():
     show_logo()
-    pws_data = read_json_data()
-    online_archive = fetch_online_archive()
-
-    if len(online_archive) > len(pws_data):
-        diff = len(online_archive) - len(pws_data)
-        print(f"Found {diff} new comic(s).")
-        print(f"Updating...")
-        updated = [i for i in process_url_to_dict(
-            [get_comic_img_url(nc) for nc in online_archive[:diff]])]
-
-        all_together = pws_data + updated
-
-        with open("data.json", "w") as jf:
-            data = json.dump(all_together, jf, indent=4, sort_keys=True)
-        print(f"Done updating!")
-
-    most_current_data = read_json_data()
-    comics_to_download = download_comics_menu(len(most_current_data))
-    for comic in most_current_data[::-1][:comics_to_download]:
+    pws_data = update_database()
+    comics_to_download = download_comics_menu(len(pws_data))
+    for comic in pws_data[::-1][:comics_to_download]:
         save_image(comic)
 
 
