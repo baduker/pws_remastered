@@ -11,7 +11,7 @@
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: beta
+        version: alpha
 ~~~
 
 This is a remake of one of my first ever non-trivial Python [scripts](https://github.com/baduker/poorlywrittenscraper) for a popular comic page [poorlydrwanlines.com](http://poorlydrawnlines.com).
@@ -24,7 +24,7 @@ Here's a list of some the major changes and improvements over the first edition.
 
 **What's new?**
 
-1. The script comes with a pre-loaded JSON to speed up scraping but also allows to narrow down the scraping scope to e.g. a year and/or a month and gives a nice little peek into the statistics. 
+1. The script comes with a pre-loaded JSON to speed up scraping but also allows to narrow down the scraping scope to e.g. a year and/or a month and gives a nice little peek into the statistics (Still to be implemented) 
 2. The scraping algorithm has been updated and now supports LXML and XPath.
 3. A new, colorful logo is there to great you each time you launch the script. Long live the ASCII art!
 

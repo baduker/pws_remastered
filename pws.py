@@ -116,6 +116,31 @@ def update_database():
     return old_json_data
 
 
+def make_dir(dir_path):
+    return os.makedirs(Path(dir_path), exist_ok=True)
+
+
+def save_image(comic: dict):
+    comic_name = comic["file_name"]
+    comic_year_folder = os.path.join(
+        GLOBALS["save_directory"], str(comic["year"]))
+    make_dir(comic_year_folder)
+    fn = Path(comic_year_folder) / comic_name
+    print(f"Fetching: {comic_name}")
+    with requests.get(comic["comic_img_url"], stream=True) \
+            as img, open(fn, "wb") as output:
+        copyfileobj(img.raw, output)
+
+
+# def sample_stats(data_object):
+#     for year in range(2011, 2020):
+#         number_of_comics = len([
+#                 comic["comic_name"] for comic
+#                 in data_object if comic["year"] == year])
+#         print(f"{year} - {number_of_comics}")
+#     print(f"Total: {len(data)} | Average per year: {round(len(data_object) / 9, 2)}")
+
+
 def download_comics_menu(comics_found: int) -> int:
     print(f"\nThe are {comics_found} comics in the database.")
     print("How many comics do you want to download?")
@@ -132,22 +157,6 @@ def download_comics_menu(comics_found: int) -> int:
         elif comics_to_download == 0:
             sys.exit()
         return comics_to_download
-
-
-def make_dir(dir_path):
-    return os.makedirs(Path(dir_path), exist_ok=True)
-
-
-def save_image(comic: dict):
-    comic_name = comic["file_name"]
-    comic_year_folder = os.path.join(
-        GLOBALS["save_directory"], str(comic["year"]))
-    make_dir(comic_year_folder)
-    fn = Path(comic_year_folder) / comic_name
-    print(f"Fetching: {comic_name}")
-    with requests.get(comic["comic_img_url"], stream=True) \
-            as img, open(fn, "wb") as output:
-        copyfileobj(img.raw, output)
 
 
 def main():
