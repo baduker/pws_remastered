@@ -11,7 +11,7 @@
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: alpha
+        version: 0.1.0
 ~~~
 
 This is a remake of one of my first ever non-trivial Python [scripts](https://github.com/baduker/poorlywrittenscraper) for a popular comic page [poorlydrwanlines.com](http://poorlydrawnlines.com).

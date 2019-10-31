@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/env python3.6
 
 ######################################################
 #
@@ -40,7 +40,7 @@ a remake of...
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: alpha
+        version: 0.1.0
 """}
 
 COMIC_PATTERN = re.compile(r'http://www.poorlydrawnlines.com/comic/.+')
@@ -56,36 +56,36 @@ def show_logo():
     print("\n".join(colored_logo))
 
 
-def read_json_data(file_name):
+def read_json_data(file_name: str) -> list:
     with open(file_name, "r") as jf:
         data = json.load(jf)
     return data
 
 
-def write_json_data(file_name, data_object):
+def write_json_data(file_name: str, data_object: list):
     with open(file_name, "w") as jf:
         data = json.dump(data_object, jf, indent=4, sort_keys=True)
 
 
-def getter(url, xpath):
+def getter(url: str, xpath: str) -> str:
     return html.fromstring(requests.get(url).content).xpath(xpath)
 
 
-def fetch_online_archive():
+def fetch_online_archive() -> list:
     print(f"Checking the online archive...")
     archive = getter(GLOBALS["archive_url"], GLOBALS["comic_url_xpath"])
     return [url for url in archive if COMIC_PATTERN.match(url)]
 
 
-def head_option(values):
+def head_option(values: list) -> str:
     return next(iter(values), None)
 
 
-def get_comic_img_url(url):
+def get_comic_img_url(url: str) -> str:
     return head_option(getter(url, GLOBALS["comic_img_xpath"]))
 
 
-def process_url_to_dict(new_urls: list):
+def process_url_to_dict(new_urls: list) -> dict:
     for new_url in new_urls:
         name = urlparse(new_url).path.split("/")[-1]
         year = int(urlparse(new_url).path.split("/")[3])
@@ -99,7 +99,7 @@ def process_url_to_dict(new_urls: list):
             "comic_img_url": new_url}
 
 
-def update_database():
+def update_database() -> list:
     old_json_data = read_json_data('data.json')
     online_archive = fetch_online_archive()
     if len(online_archive) > len(old_json_data):
@@ -130,15 +130,6 @@ def save_image(comic: dict):
     with requests.get(comic["comic_img_url"], stream=True) \
             as img, open(fn, "wb") as output:
         copyfileobj(img.raw, output)
-
-
-# def sample_stats(data_object):
-#     for year in range(2011, 2020):
-#         number_of_comics = len([
-#                 comic["comic_name"] for comic
-#                 in data_object if comic["year"] == year])
-#         print(f"{year} - {number_of_comics}")
-#     print(f"Total: {len(data)} | Average per year: {round(len(data_object) / 9, 2)}")
 
 
 def download_comics_menu(comics_found: int) -> int:
