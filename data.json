@@ -8662,5 +8662,21 @@
         "file_name": "to-be-amazing.png",
         "month": 10,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/10/okay.png",
+        "comic_name": "okay",
+        "comic_url": "http://www.poorlydrawnlines.com/okay.png/",
+        "file_name": "okay.png",
+        "month": 10,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/10/king-of-ghosts.png",
+        "comic_name": "king-of-ghosts",
+        "comic_url": "http://www.poorlydrawnlines.com/king-of-ghosts.png/",
+        "file_name": "king-of-ghosts.png",
+        "month": 10,
+        "year": 2019
     }
 ]
