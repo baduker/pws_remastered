@@ -8678,5 +8678,45 @@
         "file_name": "king-of-ghosts.png",
         "month": 10,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/where.png",
+        "comic_name": "where",
+        "comic_url": "http://www.poorlydrawnlines.com/where.png/",
+        "file_name": "where.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/accessories.png",
+        "comic_name": "accessories",
+        "comic_url": "http://www.poorlydrawnlines.com/accessories.png/",
+        "file_name": "accessories.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/picture-of-me.png",
+        "comic_name": "picture-of-me",
+        "comic_url": "http://www.poorlydrawnlines.com/picture-of-me.png/",
+        "file_name": "picture-of-me.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/a-good-day.png",
+        "comic_name": "a-good-day",
+        "comic_url": "http://www.poorlydrawnlines.com/a-good-day.png/",
+        "file_name": "a-good-day.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/busy2.png",
+        "comic_name": "busy2",
+        "comic_url": "http://www.poorlydrawnlines.com/busy2.png/",
+        "file_name": "busy2.png",
+        "month": 11,
+        "year": 2019
     }
 ]
