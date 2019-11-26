@@ -8718,5 +8718,37 @@
         "file_name": "busy2.png",
         "month": 11,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/valuable.png",
+        "comic_name": "valuable",
+        "comic_url": "http://www.poorlydrawnlines.com/valuable.png/",
+        "file_name": "valuable.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/tell-you-anything-1.png",
+        "comic_name": "tell-you-anything-1",
+        "comic_url": "http://www.poorlydrawnlines.com/tell-you-anything-1.png/",
+        "file_name": "tell-you-anything-1.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/food-chain.png",
+        "comic_name": "food-chain",
+        "comic_url": "http://www.poorlydrawnlines.com/food-chain.png/",
+        "file_name": "food-chain.png",
+        "month": 11,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/11/thrilled.png",
+        "comic_name": "thrilled",
+        "comic_url": "http://www.poorlydrawnlines.com/thrilled.png/",
+        "file_name": "thrilled.png",
+        "month": 11,
+        "year": 2019
     }
 ]

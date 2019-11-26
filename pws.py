@@ -27,7 +27,7 @@ GLOBALS = {
     "base_url": "http://www.poorlydrawnlines.com/",
     "archive_url": "http://www.poorlydrawnlines.com/archive/",
     "comic_url_xpath": '//*[@class="content page"]/ul/li/a/@href',
-    "comic_img_xpath": '//*[@class="wp-block-image"]/img/@src',
+    "comic_img_xpath": '//*[@class="wp-block-image size-large"]/img/@src',
     "save_directory": "poorly_created_folder",
     "logo": """
 a remake of...
@@ -40,7 +40,7 @@ a remake of...
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: 0.1.0
+        version: 0.1.1
 """}
 
 COMIC_PATTERN = re.compile(r'http://www.poorlydrawnlines.com/comic/.+')
