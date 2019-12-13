@@ -8750,5 +8750,29 @@
         "file_name": "thrilled.png",
         "month": 11,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/dont-need.png",
+        "comic_name": "dont-need",
+        "comic_url": "http://www.poorlydrawnlines.com/dont-need.png/",
+        "file_name": "dont-need.png",
+        "month": 12,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/here-to-fight.png",
+        "comic_name": "here-to-fight",
+        "comic_url": "http://www.poorlydrawnlines.com/here-to-fight.png/",
+        "file_name": "here-to-fight.png",
+        "month": 12,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/everything-is-great.png",
+        "comic_name": "everything-is-great",
+        "comic_url": "http://www.poorlydrawnlines.com/everything-is-great.png/",
+        "file_name": "everything-is-great.png",
+        "month": 12,
+        "year": 2019
     }
 ]
