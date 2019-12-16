@@ -45,14 +45,15 @@ jobs:
       # https://pytest.org
       # https://nose.readthedocs.io
       - run:
-          - name: run pylint
+          name: run pylint
           command: |
             . venv/bin/activate
             pylint --rcfile .pylintrc $(pwd)
       - run:
-          name: run tests
+          name: run pytest
           command: |
             . venv/bin/activate
+            pytest -v
 
       - store_artifacts:
           path: test-reports
