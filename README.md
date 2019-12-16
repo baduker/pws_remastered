@@ -46,5 +46,5 @@ Create a new virtual environment with Python 3.6+ and then just type:
 
 **The dump**
 
-As of July 2019, the entire dump of comics can be found
-[here](https://yadi.sk/d/3KO2w_sfJxU8Tg).
+As of December 2019, the entire dump of comics can be found
+[here](https://yadi.sk/d/qky1lj-P4tgvMw).
