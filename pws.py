@@ -121,7 +121,8 @@ def update_database() -> list:
 def get_new_comics(diff, online_archive):
     print(f"Found {diff} new comic(s).\nUpdating...")
     new_comics = [get_comic_img_url(comic) for comic in online_archive[:diff]]
-    return [url for url in process_url_to_dict(new_comics)]
+    process_comics = [url for url in process_url_to_dict(new_comics)]
+    return process_comics
 
 
 def make_dir(dir_path: str):
@@ -158,7 +159,7 @@ def download_comics_menu(comics_found: int) -> int:
         if comics_to_download > comics_found or comics_to_download < 0:
             print("Error: incorrect number of comics to download. Try again.")
             continue
-        elif comics_to_download == 0:
+        if comics_to_download == 0:
             sys.exit()
         return comics_to_download
 
