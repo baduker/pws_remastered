@@ -11,7 +11,7 @@
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: 0.1.3
+        version: 0.1.4
 ~~~
 
 This is a remake of one of my first ever non-trivial Python 

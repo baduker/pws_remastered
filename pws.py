@@ -41,7 +41,7 @@ a remake of...
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: 0.1.3
+        version: 0.1.4
 """}
 
 COMIC_PATTERN = re.compile(r"http://www.poorlydrawnlines.com/comic/.+")
@@ -52,8 +52,8 @@ def show_logo():
     colorama.init(autoreset=True)
     codes = vars(colorama.Fore)
     colors = [codes[color] for color in codes if color not in bad_colors]
-    colored_logo = [
-        random.choice(colors) + line for line in GLOBALS["logo"].split("\n")]
+    logo = GLOBALS["logo"].split("\n")
+    colored_logo = [random.choice(colors) + line for line in logo]
     print("\n".join(colored_logo))
 
 
@@ -65,7 +65,7 @@ def read_json_data(file_name: str) -> list:
 
 def write_json_data(file_name: str, data_object: list):
     with open(file_name, "w") as jf:
-        data = json.dump(data_object, jf, indent=4, sort_keys=True)
+        json.dump(data_object, jf, indent=4, sort_keys=True)
 
 
 def getter(url: str, xpath: str) -> list:
@@ -89,8 +89,8 @@ def get_comic_img_url(url: str) -> str:
 def process_url_to_dict(new_urls: list) -> dict:
     for new_url in new_urls:
         name = urlparse(new_url).path.split("/")[-1]
-        year = int(urlparse(new_url).path.split("/")[3])
-        month = int(urlparse(new_url).path.split("/")[4])
+        year = extract_url_value(new_url, 3)
+        month = extract_url_value(new_url, 4)
         yield {
             "comic_name": name.split(".")[0],
             "file_name": name,
@@ -100,37 +100,49 @@ def process_url_to_dict(new_urls: list) -> dict:
             "comic_img_url": new_url}
 
 
+def extract_url_value(url, position):
+    return int(urlparse(url).path.split("/")[position])
+
+
 def update_database() -> list:
     old_json_data = read_json_data('data.json')
     online_archive = fetch_online_archive()
     if len(online_archive) > len(old_json_data):
         diff = len(online_archive) - len(old_json_data)
-        print(f"Found {diff} new comic(s).")
-        print(f"Updating...")
-        new_comics = [get_comic_img_url(nc) for nc in online_archive[:diff]]
-        new_comics_json = [url for url in process_url_to_dict(new_comics)]
-        updated_data = old_json_data + new_comics_json
+        updated_data = old_json_data + get_new_comics(diff, online_archive)
         write_json_data('data.json', updated_data)
-        print(f"Done updating!")
         new_json_data = read_json_data('data.json')
+        print(f"Done updating!")
         return new_json_data
+
     return old_json_data
 
 
-def make_dir(dir_path):
+def get_new_comics(diff, online_archive):
+    print(f"Found {diff} new comic(s).\nUpdating...")
+    new_comics = [get_comic_img_url(comic) for comic in online_archive[:diff]]
+    return [url for url in process_url_to_dict(new_comics)]
+
+
+def make_dir(dir_path: str):
     return os.makedirs(Path(dir_path), exist_ok=True)
 
 
 def save_image(comic: dict):
     comic_name = comic["file_name"]
-    comic_year_folder = os.path.join(
-        GLOBALS["save_directory"], str(comic["year"]))
-    make_dir(comic_year_folder)
-    fn = Path(comic_year_folder) / comic_name
+    folder = get_folder_name(comic)
+    make_dir(folder)
+    file_name = Path(folder) / comic_name
     print(f"Fetching: {comic_name}")
     with requests.get(comic["comic_img_url"], stream=True) \
-            as img, open(fn, "wb") as output:
+            as img, open(file_name, "wb") as output:
         copyfileobj(img.raw, output)
+
+
+def get_folder_name(comic: dict) -> str:
+    comic_year = str(comic["year"])
+    folder_name = os.path.join(GLOBALS["save_directory"], comic_year)
+    return folder_name
 
 
 def download_comics_menu(comics_found: int) -> int:
@@ -161,16 +173,20 @@ def show_time(time_in_seconds: float) -> str:
         raise TypeError("Invalid time execution input.")
 
 
-def main():
-    show_logo()
-    pws_data = update_database()
-    comics_to_download = download_comics_menu(len(pws_data))
+def get_comics(comics_to_download: int, pws_data: list):
     start = datetime.datetime.utcnow()
     for comic in pws_data[::-1][:comics_to_download]:
         save_image(comic)
     stop = datetime.datetime.utcnow()
     time_taken = show_time((stop - start).total_seconds())
     print(f"Downloaded {comics_to_download} comic(s) in {time_taken}")
+
+
+def main():
+    show_logo()
+    pws_data = update_database()
+    comics_to_download = download_comics_menu(len(pws_data))
+    get_comics(comics_to_download, pws_data)
 
 
 if __name__ == '__main__':
