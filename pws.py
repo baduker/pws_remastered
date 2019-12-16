@@ -1,3 +1,4 @@
+# pylint: disable=unnecessary-comprehension
 #!/usr/bin/env python3.6
 
 ######################################################
