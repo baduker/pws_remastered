@@ -13,13 +13,14 @@ import re
 import sys
 import json
 import random
-import colorama
+import datetime
 from pathlib import Path
 from shutil import copyfileobj
 from urllib.parse import urlparse, urljoin
 
 
 import requests
+import colorama
 from lxml import html
 
 
@@ -40,10 +41,10 @@ a remake of...
 ┌─┐┌─┐┬─┐┌─┐┌─┐┌─┐┬─┐
 └─┐│  ├┬┘├─┤├─┘├┤ ├┬┘
 └─┘└─┘┴└─┴ ┴┴  └─┘┴└─
-        version: 0.1.1
+        version: 0.1.3
 """}
 
-COMIC_PATTERN = re.compile(r'http://www.poorlydrawnlines.com/comic/.+')
+COMIC_PATTERN = re.compile(r"http://www.poorlydrawnlines.com/comic/.+")
 
 
 def show_logo():
@@ -67,7 +68,7 @@ def write_json_data(file_name: str, data_object: list):
         data = json.dump(data_object, jf, indent=4, sort_keys=True)
 
 
-def getter(url: str, xpath: str) -> str:
+def getter(url: str, xpath: str) -> list:
     return html.fromstring(requests.get(url).content).xpath(xpath)
 
 
@@ -150,12 +151,26 @@ def download_comics_menu(comics_found: int) -> int:
         return comics_to_download
 
 
+def show_time(time_in_seconds: float) -> str:
+    if isinstance(time_in_seconds, float):
+        minutes, seconds = divmod(int(time_in_seconds), 60)
+        hours, minutes = divmod(minutes, 60)
+        human_readable_time = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+        return human_readable_time
+    else:
+        raise TypeError("Invalid time execution input.")
+
+
 def main():
     show_logo()
     pws_data = update_database()
     comics_to_download = download_comics_menu(len(pws_data))
+    start = datetime.datetime.utcnow()
     for comic in pws_data[::-1][:comics_to_download]:
         save_image(comic)
+    stop = datetime.datetime.utcnow()
+    time_taken = show_time((stop - start).total_seconds())
+    print(f"Downloaded {comics_to_download} comic(s) in {time_taken}")
 
 
 if __name__ == '__main__':

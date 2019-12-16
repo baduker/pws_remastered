@@ -8774,5 +8774,13 @@
         "file_name": "everything-is-great.png",
         "month": 12,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/a-cookie.png",
+        "comic_name": "a-cookie",
+        "comic_url": "http://www.poorlydrawnlines.com/a-cookie.png/",
+        "file_name": "a-cookie.png",
+        "month": 12,
+        "year": 2019
     }
 ]
