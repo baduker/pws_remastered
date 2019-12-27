@@ -8782,5 +8782,29 @@
         "file_name": "a-cookie.png",
         "month": 12,
         "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/impersonating_santa.png",
+        "comic_name": "impersonating_santa",
+        "comic_url": "http://www.poorlydrawnlines.com/impersonating_santa.png/",
+        "file_name": "impersonating_santa.png",
+        "month": 12,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/not-santa.png",
+        "comic_name": "not-santa",
+        "comic_url": "http://www.poorlydrawnlines.com/not-santa.png/",
+        "file_name": "not-santa.png",
+        "month": 12,
+        "year": 2019
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/after-this.png",
+        "comic_name": "after-this",
+        "comic_url": "http://www.poorlydrawnlines.com/after-this.png/",
+        "file_name": "after-this.png",
+        "month": 12,
+        "year": 2019
     }
 ]
