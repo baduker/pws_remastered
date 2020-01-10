@@ -8800,10 +8800,26 @@
         "year": 2019
     },
     {
-        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/after-this.png",
-        "comic_name": "after-this",
-        "comic_url": "http://www.poorlydrawnlines.com/after-this.png/",
-        "file_name": "after-this.png",
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2020/01/magic-is-real.png",
+        "comic_name": "magic-is-real",
+        "comic_url": "http://www.poorlydrawnlines.com/magic-is-real.png/",
+        "file_name": "magic-is-real.png",
+        "month": 1,
+        "year": 2020
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2020/01/just-ask.png",
+        "comic_name": "just-ask",
+        "comic_url": "http://www.poorlydrawnlines.com/just-ask.png/",
+        "file_name": "just-ask.png",
+        "month": 1,
+        "year": 2020
+    },
+    {
+        "comic_img_url": "http://www.poorlydrawnlines.com/wp-content/uploads/2019/12/impersonating_santa.png",
+        "comic_name": "impersonating_santa",
+        "comic_url": "http://www.poorlydrawnlines.com/impersonating_santa.png/",
+        "file_name": "impersonating_santa.png",
         "month": 12,
         "year": 2019
     }

@@ -98,19 +98,20 @@ def process_url_to_dict(new_urls: list) -> dict:
             "year": year,
             "month": month,
             "comic_url": urljoin(GLOBALS["base_url"], name + "/"),
-            "comic_img_url": new_url}
+            "comic_img_url": new_url,
+            }
 
 
-def extract_url_value(url, position):
+def extract_url_value(url: str, position: int) -> int:
     return int(urlparse(url).path.split("/")[position])
 
 
 def update_database() -> list:
     old_json_data = read_json_data('data.json')
     online_archive = fetch_online_archive()
-    if len(online_archive) > len(old_json_data):
-        diff = len(online_archive) - len(old_json_data)
-        updated_data = old_json_data + get_new_comics(diff, online_archive)
+    diff = len(online_archive) - len(old_json_data)
+    if diff > 0:
+        updated_data = old_json_data + get_new_comics(online_archive, diff)
         write_json_data('data.json', updated_data)
         new_json_data = read_json_data('data.json')
         print(f"Done updating!")
@@ -119,15 +120,20 @@ def update_database() -> list:
     return old_json_data
 
 
-def get_new_comics(diff, online_archive):
+def get_new_comics(online_archive: list, diff: int) -> list:
     print(f"Found {diff} new comic(s).\nUpdating...")
-    new_comics = [get_comic_img_url(comic) for comic in online_archive[:diff]]
-    process_comics = [url for url in process_url_to_dict(new_comics)]
-    return process_comics
+    new_comics = (get_comic_img_url(comic) for comic in online_archive[:diff])
+    return [url for url in process_url_to_dict(new_comics)]
 
 
 def make_dir(dir_path: str):
     return os.makedirs(Path(dir_path), exist_ok=True)
+
+
+def get_folder_name(comic: dict) -> str:
+    comic_year = str(comic["year"])
+    folder_name = os.path.join(GLOBALS["save_directory"], comic_year)
+    return folder_name
 
 
 def save_image(comic: dict):
@@ -139,12 +145,6 @@ def save_image(comic: dict):
     with requests.get(comic["comic_img_url"], stream=True) \
             as img, open(file_name, "wb") as output:
         copyfileobj(img.raw, output)
-
-
-def get_folder_name(comic: dict) -> str:
-    comic_year = str(comic["year"])
-    folder_name = os.path.join(GLOBALS["save_directory"], comic_year)
-    return folder_name
 
 
 def download_comics_menu(comics_found: int) -> int:
